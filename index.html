@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deli KansBook</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -20,7 +21,7 @@
             position: relative;
         }
 
-        /* 1-QISM: Kirish oynasi (O'zgarmagan holatda) */
+        /* 1-QISM: Kirish oynasi (Harakatlanuvchi fon) */
         #welcome-screen {
             position: fixed;
             top: 0;
@@ -139,13 +140,13 @@
             box-shadow: 0 5px 20px rgba(179, 25, 48, 0.4);
         }
 
-        /* 2-QISM: Asosiy do'kon va Katalog bo'limlari */
+        /* 2-QISM: Asosiy do'kon sahifasi (Mutolaa uslubida) */
         #main-screen {
             display: none;
             height: 100vh;
             flex-direction: column;
             justify-content: space-between;
-            background-color: #fff;
+            background-color: #fcfcfc;
             overflow-y: auto;
             padding-bottom: 70px;
         }
@@ -155,69 +156,56 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #f1f1f3;
+            background: #fff;
+            border-bottom: 1px solid #eee;
         }
 
-        .user-info h2 { font-size: 13px; color: #666; font-weight: normal; }
-        .user-info h1 { font-size: 18px; color: #111; font-weight: bold; }
+        .user-info h2 { font-size: 12px; color: #888; font-weight: normal; }
+        .user-info h1 { font-size: 17px; color: #111; font-weight: bold; }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #b31930;
-        }
-        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        .content-body { padding: 20px; }
-
-        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #111; }
-
-        /* Kategoriyalar to'rsimon (grid) ko'rinishi - kitob sotib olish uchun alohida bo'limlar */
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .category-box {
-            background: #f8f9fa;
-            border: 1px solid #eaeaea;
-            border-radius: 16px;
-            padding: 20px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .category-box:active {
-            transform: scale(0.96);
-            background: #f1f1f3;
-        }
-
-        .category-box h3 { font-size: 15px; color: #111; margin-bottom: 5px; }
-        .category-box p { font-size: 12px; color: #666; }
-
-        /* Tanlangan bo'lim ichidagi kitoblar ro'yxati (dastlab yashirin) */
-        #category-detail {
-            display: none;
-        }
-
-        .back-cat-btn {
-            background: none;
+        .admin-badge-btn {
+            background: #111;
+            color: #fff;
             border: none;
-            color: #b31930;
-            font-size: 15px;
-            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
             cursor: pointer;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-weight: bold;
         }
 
+        .content-body { padding: 15px 20px; }
+
+        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #111; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Kategoriyalar lentasi */
+        .categories-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+            padding-bottom: 5px;
+        }
+
+        .cat-chip {
+            background: #f1f1f3;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .cat-chip.active {
+            background: #b31930;
+            color: white;
+            font-weight: 500;
+        }
+
+        /* Kitob do'koni tokchalari (Grid) */
         .books-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -229,31 +217,139 @@
             border: 1px solid #eaeaea;
             border-radius: 14px;
             overflow: hidden;
-            padding: 10px;
-            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: transform 0.1s;
         }
+
+        .book-card:active { transform: scale(0.97); }
 
         .book-card img {
             width: 100%;
-            height: 130px;
+            height: 150px;
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 8px;
+            background: #eee;
         }
 
-        .book-card h4 { font-size: 14px; color: #111; margin-bottom: 4px; }
-        .book-card span { font-size: 13px; color: #b31930; font-weight: bold; display: block; margin-bottom: 8px; }
+        .book-card h4 { font-size: 13px; color: #111; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .book-card p { font-size: 11px; color: #666; margin-bottom: 6px; }
+        .book-card .price { font-size: 14px; color: #b31930; font-weight: bold; display: block; }
 
-        .buy-btn {
+        /* 3-QISM: Kitob haqida batafsil va Iqtibos oynasi (Modal) */
+        #book-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 100%;
+            max-height: 85vh;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 20px;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .modal-header h3 { font-size: 18px; }
+        .close-modal { background: none; border: none; font-size: 20px; cursor: pointer; color: #666; }
+
+        .modal-book-info { display: flex; gap: 15px; margin-bottom: 15px; }
+        .modal-book-info img { width: 90px; height: 130px; object-fit: cover; border-radius: 8px; }
+        .modal-book-details h4 { font-size: 16px; margin-bottom: 5px; }
+        .modal-book-details p { font-size: 13px; color: #666; margin-bottom: 8px; }
+        .modal-book-details .modal-price { font-size: 16px; color: #b31930; font-weight: bold; }
+
+        .quote-box-section {
+            background: #f8f9fa;
+            border: 1px dashed #ccc;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .quote-box-section label { font-size: 12px; font-weight: bold; color: #444; display: block; margin-bottom: 5px; }
+        .quote-box-section textarea {
+            width: 100%;
+            height: 60px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 13px;
+            outline: none;
+            resize: none;
+            background: #fff;
+        }
+
+        .buy-full-btn {
             background: #b31930;
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
             width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: bold;
             cursor: pointer;
+            text-align: center;
+        }
+
+        /* 4-QISM: Admin Paneli (Faqat admin uchun) */
+        #admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 300;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .admin-form-group { margin-bottom: 15px; }
+        .admin-form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #333; }
+        .admin-form-group input, .admin-form-group select, .admin-form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            background: #f9f9f9;
+        }
+
+        .save-book-btn {
+            background: #111;
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
         /* Pastki navigatsiya menyusi */
@@ -309,7 +405,7 @@
 
         <div class="overlay">
             <div class="top-bar">
-                <button class="close-btn" onclick="window.close()">✕ Yopish</button>
+                <button class="close-btn" onclick="Telegram.WebApp.close()">✕ Yopish</button>
             </div>
             <div class="bottom-box">
                 <button class="start-btn" id="startBtn">
@@ -325,55 +421,28 @@
             <div class="main-header">
                 <div class="user-info">
                     <h2>Xush kelibsiz,</h2>
-                    <h1>Ahrorbek Adxamov</h1>
+                    <h1 id="user-telegram-name">Foydalanuvchi</h1>
                 </div>
-                <div class="user-avatar">
-                    <img src="logo.jpg" alt="Profil">
-                </div>
+                <!-- Faqat admin ko'radigan panel tugmasi -->
+                <button id="adminBtn" class="admin-badge-btn" style="display:none;" onclick="openAdminPanel()">⚙️ Admin</button>
             </div>
 
             <div class="content-body">
-                <!-- Asosiy Katalog va Bo'limlar ro'yxati -->
-                <div id="categories-view">
-                    <div class="section-title">Kitoblar katalogi</div>
-                    <div class="categories-grid">
-                        <div class="category-box" onclick="openCategory('Shaxsiy rivojlanish')">
-                            <h3>Shaxsiy rivojlanish</h3>
-                            <p>15 ta kitob</p>
-                        </div>
-                        <div class="category-box" onclick="openCategory('Diniy kitoblar')">
-                            <h3>Diniy kitoblar</h3>
-                            <p>20 ta kitob</p>
-                        </div>
-                        <div class="category-box" onclick="openCategory('Badiiy adabiyot')">
-                            <h3>Badiiy adabiyot</h3>
-                            <p>12 ta kitob</p>
-                        </div>
-                        <div class="category-box" onclick="openCategory('Biznes va Moliya')">
-                            <h3>Biznes va Moliya</h3>
-                            <p>10 ta kitob</p>
-                        </div>
-                    </div>
+                <!-- Kategoriyalar filtri -->
+                <div class="categories-scroll" id="categoryChips">
+                    <div class="cat-chip active" onclick="filterCategory('Barchasi', this)">Barchasi</div>
+                    <div class="cat-chip" onclick="filterCategory('Shaxsiy rivojlanish', this)">Shaxsiy rivojlanish</div>
+                    <div class="cat-chip" onclick="filterCategory('Diniy', this)">Diniy</div>
+                    <div class="cat-chip" onclick="filterCategory('Badiiy', this)">Badiiy</div>
                 </div>
 
-                <!-- Tanlangan bo'lim ichidagi kitoblar -->
-                <div id="category-detail">
-                    <button class="back-cat-btn" onclick="backToCategories()">← Orqaga qaytish</button>
-                    <div class="section-title" id="cat-title">Bo'lim</div>
-                    <div class="books-grid">
-                        <div class="book-card">
-                            <img src="logo.jpg" alt="Kitob">
-                            <h4>Ibratli Kitob</h4>
-                            <span>45,000 so'm</span>
-                            <button class="buy-btn" onclick="alert('Savatga qo\'shildi!')">Sotib olish</button>
-                        </div>
-                        <div class="book-card">
-                            <img src="logo.jpg" alt="Kitob">
-                            <h4>Muvaffaqiyat siri</h4>
-                            <span>38,000 so'm</span>
-                            <button class="buy-btn" onclick="alert('Savatga qo\'shildi!')">Sotib olish</button>
-                        </div>
-                    </div>
+                <div class="section-title">
+                    <span>Kitoblar katalogi</span>
+                </div>
+
+                <!-- Kitoblar chiqadigan tokcha -->
+                <div class="books-grid" id="booksGridContainer">
+                    <!-- Dinamik ravishda kitoblar qo'shiladi -->
                 </div>
             </div>
         </div>
@@ -388,7 +457,7 @@
                 <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 Sevimlilar
             </div>
-            <div class="nav-item active" onclick="backToCategories()">
+            <div class="nav-item active">
                 <svg viewBox="0 0 24 24"><path d="M10 20c-1.1 0-1.99.9-1.99 2S8.9 24 10 24s2-.9 2-2-.9-2-2-2zm0-18c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
                 Katalog
             </div>
@@ -403,24 +472,207 @@
         </div>
     </div>
 
+    <!-- 3. Kitob batafsil va iqtibos yozish oynasi -->
+    <div id="book-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="m-book-title">Kitob nomi</h3>
+                <button class="close-modal" onclick="closeBookModal()">✕</button>
+            </div>
+            <div class="modal-book-info">
+                <img id="m-book-img" src="" alt="Kitob">
+                <div class="modal-book-details">
+                    <h4 id="m-book-author">Muallif</h4>
+                    <p id="m-book-cat">Kategoriya</p>
+                    <span class="modal-price" id="m-book-price">0 so'm</span>
+                </div>
+            </div>
+
+            <!-- Mutolaa uslubidagi iqtibos yozish -->
+            <div class="quote-box-section">
+                <label>✍️ Ushbu kitob haqida o'z iqtibosingiz yoki taassurotingizni yozing:</label>
+                <textarea id="userQuoteInput" placeholder="Masalan: Insonni tubdan o'zgartiradigan ajoyib kitob..."></textarea>
+            </div>
+
+            <button class="buy-full-btn" onclick="orderBook()">Sotib olish</button>
+        </div>
+    </div>
+
+    <!-- 4. Admin Paneli (Kitob qo'shish) -->
+    <div id="admin-panel">
+        <div class="admin-header">
+            <h3>⚙️ Admin: Yangi kitob qo'shish</h3>
+            <button class="close-modal" onclick="closeAdminPanel()">✕ Yopish</button>
+        </div>
+        <div class="admin-form-group">
+            <label>Kitob nomi</label>
+            <input type="text" id="newTitle" placeholder="Masalan: Atom odatlar">
+        </div>
+        <div class="admin-form-group">
+            <label>Muallifi</label>
+            <input type="text" id="newAuthor" placeholder="Masalan: Jeyms Klir">
+        </div>
+        <div class="admin-form-group">
+            <label>Kategoriyasi</label>
+            <select id="newCategory">
+                <option value="Shaxsiy rivojlanish">Shaxsiy rivojlanish</option>
+                <option value="Diniy">Diniy</option>
+                <option value="Badiiy">Badiiy</option>
+            </select>
+        </div>
+        <div class="admin-form-group">
+            <label>Narxi (so'm)</label>
+            <input type="text" id="newPrice" placeholder="Masalan: 45,000">
+        </div>
+        <div class="admin-form-group">
+            <label>Rasm havolasi (URL yoki logo.jpg)</label>
+            <input type="text" id="newImage" value="logo.jpg" placeholder="logo.jpg">
+        </div>
+        <button class="save-book-btn" onclick="addNewBook()">Kitobni katalogga qo'shish</button>
+    </div>
+
     <script>
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+
+        // Admin Telegram ID (O'zingizning Telegram raqamli ID'ingizni shu yerga yozasiz, masalan: 123456789)
+        const ADMIN_TELEGRAM_ID = 000000000; // <--- O'z ID raqamingizni yozing
+
+        // Boshlang'ich kitoblar bazasi
+        let books = [
+            { id: 1, title: "Atom odatlar", author: "Jeyms Klir", category: "Shaxsiy rivojlanish", price: "50,000", image: "logo.jpg", quote: "" },
+            { id: 2, title: "Ibodat-i qalbiya", author: "Shayx Muhammad Sodiq", category: "Diniy", price: "45,000", image: "logo.jpg", quote: "" },
+            { id: 3, title: "1984", author: "Jorj Oruell", category: "Badiiy", price: "40,000", image: "logo.jpg", quote: "" }
+        ];
+
+        let currentSelectedBookId = null;
+
+        // Foydalanuvchi Telegram niki aniqlash
+        window.addEventListener('DOMContentLoaded', () => {
+            const tgUser = Telegram.WebApp.initDataUnsafe?.user;
+            const nameEl = document.getElementById('user-telegram-name');
+            const adminBtn = document.getElementById('adminBtn');
+
+            if (tgUser && tgUser.first_name) {
+                nameEl.innerText = tgUser.username ? `@${tgUser.username}` : tgUser.first_name;
+                
+                // Agar kirgan odam admin bo'lsa, admin tugmasini chiqarish
+                if (tgUser.id === ADMIN_TELEGRAM_ID) {
+                    adminBtn.style.display = 'inline-block';
+                }
+            } else {
+                nameEl.innerText = "Mehmon (Telegram)";
+            }
+
+            renderBooks('Barchasi');
+        });
+
         // Boshlash tugmasi
         document.getElementById('startBtn').addEventListener('click', function() {
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('main-screen').style.display = 'flex';
         });
 
-        // Kategoriyaga kirish
-        function openCategory(catName) {
-            document.getElementById('categories-view').style.display = 'none';
-            document.getElementById('category-detail').style.display = 'block';
-            document.getElementById('cat-title').innerText = catName;
+        // Kitoblarni ekranga chiqarish
+        function renderBooks(category) {
+            const grid = document.getElementById('booksGridContainer');
+            grid.innerHTML = '';
+
+            let filtered = books;
+            if (category !== 'Barchasi') {
+                filtered = books.filter(b => b.category === category);
+            }
+
+            filtered.forEach(book => {
+                grid.innerHTML += `
+                    <div class="book-card" onclick="openBookModal(${book.id})">
+                        <img src="${book.image}" alt="Book">
+                        <h4>${book.title}</h4>
+                        <p>${book.author}</p>
+                        <span class="price">${book.price} so'm</span>
+                    </div>
+                `;
+            });
         }
 
-        // Kategoriyalar ro'yxatiga qaytish
-        function backToCategories() {
-            document.getElementById('category-detail').style.display = 'none';
-            document.getElementById('categories-view').style.display = 'block';
+        // Kategoriyalar bo'yicha filtrlash
+        function filterCategory(cat, element) {
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            renderBooks(cat);
+        }
+
+        // Kitob ustiga bosganda modalni ochish
+        function openBookModal(id) {
+            currentSelectedBookId = id;
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+
+            document.getElementById('m-book-title').innerText = book.title;
+            document.getElementById('m-book-author').innerText = book.author;
+            document.getElementById('m-book-cat').innerText = book.category;
+            document.getElementById('m-book-price').innerText = book.price + " so'm";
+            document.getElementById('m-book-img').src = book.image;
+            document.getElementById('userQuoteInput').value = book.quote || '';
+
+            document.getElementById('book-modal').style.display = 'flex';
+        }
+
+        function closeBookModal() {
+            document.getElementById('book-modal').style.display = 'none';
+        }
+
+        // Kitob sotib olish va iqtibosni saqlash
+        function orderBook() {
+            const quoteText = document.getElementById('userQuoteInput').value;
+            const book = books.find(b => b.id === currentSelectedBookId);
+            if(book) {
+                book.quote = quoteText;
+            }
+            alert("Kitob savatga qo'shildi va iqtibosingiz saqlandi!");
+            closeBookModal();
+        }
+
+        // Admin panelini ochish/yopish
+        function openAdminPanel() {
+            document.getElementById('admin-panel').style.display = 'flex';
+        }
+        function closeAdminPanel() {
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+
+        // Yangi kitob qo'shish (Admin uchun juda oson)
+        function addNewBook() {
+            const title = document.getElementById('newTitle').value;
+            const author = document.getElementById('newAuthor').value;
+            const category = document.getElementById('newCategory').value;
+            const price = document.getElementById('newPrice').value;
+            const image = document.getElementById('newImage').value;
+
+            if (!title || !price) {
+                alert("Iltimos, kitob nomi va narxini kiriting!");
+                return;
+            }
+
+            const newBook = {
+                id: books.length + 1,
+                title: title,
+                author: author || 'Noma\'lum',
+                category: category,
+                price: price,
+                image: image || 'logo.jpg',
+                quote: ''
+            };
+
+            books.push(newBook);
+            renderBooks('Barchasi');
+            closeAdminPanel();
+            alert("Yangi kitob katalogga muvaffaqiyatli qo'shildi!");
+
+            // Formani tozalash
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newAuthor').value = '';
+            document.getElementById('newPrice').value = '';
         }
     </script>
 </body>

@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #0d0d0d;
+            background-color: #0b0b0b;
             color: #ffffff;
             height: 100vh;
             overflow: hidden;
@@ -24,13 +24,13 @@
         /* Orqa fondagi harakatlanuvchi qismlar */
         .background-grid {
             position: absolute;
-            top: -50%;
+            top: -100%;
             left: 0;
             width: 100%;
-            height: 200%;
+            height: 300%;
             display: flex;
             gap: 15px;
-            opacity: 0.3;
+            opacity: 0.9;
             pointer-events: none;
             z-index: 1;
         }
@@ -42,52 +42,54 @@
             gap: 15px;
         }
 
-        /* Yuqoridan pastga siljiydigan animatsiya */
+        /* Yuqoridan pastga tez harakatlanadigan animatsiya (4 sekund) */
         .col-down {
-            animation: scrollDown 20s linear infinite;
+            animation: scrollDown 4s linear infinite;
         }
 
-        /* Pastdan yuqoriga siljiydigan animatsiya */
+        /* Pastdan yuqoriga tez harakatlanadigan animatsiya (4 sekund) */
         .col-up {
-            animation: scrollUp 20s linear infinite;
+            animation: scrollUp 4s linear infinite;
         }
 
         @keyframes scrollDown {
             0% { transform: translateY(0); }
-            100% { transform: translateY(50%); }
+            100% { transform: translateY(33.33%); }
         }
 
         @keyframes scrollUp {
-            0% { transform: translateY(50%); }
+            0% { transform: translateY(33.33%); }
             100% { transform: translateY(0); }
         }
 
         .col img {
             width: 100%;
-            height: 150px;
+            height: 160px;
             object-fit: cover;
-            border-radius: 12px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
         }
 
         .text-box {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 35px;
             justify-content: center;
             align-items: center;
         }
 
         .bg-text {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 900;
             text-transform: uppercase;
-            color: #555;
+            color: #ffffff;
             white-space: nowrap;
+            letter-spacing: 2px;
         }
 
         .bg-text.highlight {
-            color: #b31930;
-            text-shadow: 0 0 15px rgba(179, 25, 48, 0.7);
+            color: #ff2a4d;
+            text-shadow: 0 0 20px rgba(255, 42, 77, 0.9);
         }
 
         /* Ustki qoplama va tugma */
@@ -97,7 +99,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, rgba(13,13,13,0.2) 0%, rgba(13,13,13,0.85) 75%, rgba(13,13,13,1) 100%);
+            background: linear-gradient(180deg, rgba(11,11,11,0.3) 0%, rgba(11,11,11,0.65) 80%, rgba(11,11,11,0.95) 100%);
             z-index: 10;
             display: flex;
             flex-direction: column;
@@ -111,12 +113,13 @@
         }
 
         .close-btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             border: none;
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
             backdrop-filter: blur(5px);
         }
@@ -141,7 +144,8 @@
             border: none;
             border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(179, 25, 48, 0.5);
+            box-shadow: 0 5px 25px rgba(179, 25, 48, 0.6);
+            transition: transform 0.2s;
         }
 
         .start-btn:active {
@@ -153,8 +157,10 @@
 
     <!-- Harakatlanuvchi fon qismi -->
     <div class="background-grid">
-        <!-- 1-ustun: Yuqoridan pastga -->
         <div class="col col-down">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
@@ -163,7 +169,6 @@
             <img src="logo.jpg" alt="Logo">
         </div>
 
-        <!-- 2-ustun: Matnlar (Pastdan yuqoriga) -->
         <div class="col col-up text-box">
             <div class="bg-text">KITOBLAR</div>
             <div class="bg-text highlight">KITOBLAR</div>
@@ -173,10 +178,14 @@
             <div class="bg-text">KITOBLAR</div>
             <div class="bg-text">KITOBLAR</div>
             <div class="bg-text highlight">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text highlight">KITOBLAR</div>
         </div>
 
-        <!-- 3-ustun: Yuqoridan pastga -->
         <div class="col col-down">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">

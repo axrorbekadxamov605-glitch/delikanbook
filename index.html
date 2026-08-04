@@ -16,20 +16,21 @@
         body {
             background-color: #0d0d0d;
             color: #ffffff;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
             position: relative;
         }
 
-        /* Orqa fondagi siljiydigan rasm va matnlar effekti */
+        /* Orqa fondagi harakatlanuvchi qismlar */
         .background-grid {
             position: absolute;
-            top: 0;
+            top: -50%;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 200%;
             display: flex;
-            opacity: 0.25;
+            gap: 15px;
+            opacity: 0.3;
             pointer-events: none;
             z-index: 1;
         }
@@ -39,42 +40,64 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            padding: 10px;
+        }
+
+        /* Yuqoridan pastga siljiydigan animatsiya */
+        .col-down {
+            animation: scrollDown 20s linear infinite;
+        }
+
+        /* Pastdan yuqoriga siljiydigan animatsiya */
+        .col-up {
+            animation: scrollUp 20s linear infinite;
+        }
+
+        @keyframes scrollDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
+        }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(50%); }
+            100% { transform: translateY(0); }
         }
 
         .col img {
             width: 100%;
-            height: 140px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 12px;
         }
 
-        .text-col {
-            justify-content: space-around;
+        .text-box {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            justify-content: center;
             align-items: center;
         }
 
         .bg-text {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 900;
             text-transform: uppercase;
-            color: #444;
+            color: #555;
             white-space: nowrap;
         }
 
         .bg-text.highlight {
             color: #b31930;
-            text-shadow: 0 0 15px rgba(179, 25, 48, 0.6);
+            text-shadow: 0 0 15px rgba(179, 25, 48, 0.7);
         }
 
-        /* Asosiy oyna va tugma qismi */
+        /* Ustki qoplama va tugma */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, rgba(13,13,13,0.3) 0%, rgba(13,13,13,0.9) 80%);
+            background: linear-gradient(180deg, rgba(13,13,13,0.2) 0%, rgba(13,13,13,0.85) 75%, rgba(13,13,13,1) 100%);
             z-index: 10;
             display: flex;
             flex-direction: column;
@@ -100,7 +123,7 @@
 
         .bottom-box {
             text-align: center;
-            padding-bottom: 30px;
+            padding-bottom: 25px;
         }
 
         .start-btn {
@@ -118,8 +141,7 @@
             border: none;
             border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(179, 25, 48, 0.4);
-            transition: transform 0.2s;
+            box-shadow: 0 5px 20px rgba(179, 25, 48, 0.5);
         }
 
         .start-btn:active {
@@ -129,24 +151,42 @@
 </head>
 <body>
 
-    <!-- Orqa fondagi kitoblar va matnlar -->
+    <!-- Harakatlanuvchi fon qismi -->
     <div class="background-grid">
-        <div class="col text-col">
-            <span class="bg-text">KITOBLAR</span>
-            <span class="bg-text">KITOBLAR</span>
-            <span class="bg-text highlight">KITOBLAR</span>
-            <span class="bg-text">KITOBLAR</span>
-            <span class="bg-text">KITOBLAR</span>
+        <!-- 1-ustun: Yuqoridan pastga -->
+        <div class="col col-down">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
         </div>
-        <div class="col">
-            <img src="logo.jpg" alt="Kitob">
-            <img src="logo.jpg" alt="Kitob">
-            <img src="logo.jpg" alt="Kitob">
-            <img src="logo.jpg" alt="Kitob">
+
+        <!-- 2-ustun: Matnlar (Pastdan yuqoriga) -->
+        <div class="col col-up text-box">
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text highlight">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text highlight">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text highlight">KITOBLAR</div>
+        </div>
+
+        <!-- 3-ustun: Yuqoridan pastga -->
+        <div class="col col-down">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
+            <img src="logo.jpg" alt="Logo">
         </div>
     </div>
 
-    <!-- Ustki qism va tugma -->
+    <!-- Tugmalar qismi -->
     <div class="overlay">
         <div class="top-bar">
             <button class="close-btn" onclick="Telegram.WebApp.close()">✕ Yopish</button>

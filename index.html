@@ -14,8 +14,8 @@
         }
 
         body {
-            background-color: #0b0b0b;
-            color: #ffffff;
+            background-color: #f4f4f6; /* Och rangli fon */
+            color: #111;
             height: 100vh;
             overflow: hidden;
             position: relative;
@@ -29,8 +29,8 @@
             width: 100%;
             height: 300%;
             display: flex;
-            gap: 15px;
-            opacity: 0.9;
+            gap: 12px;
+            padding: 10px;
             pointer-events: none;
             z-index: 1;
         }
@@ -39,17 +39,16 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
-        /* Yuqoridan pastga tez harakatlanadigan animatsiya (4 sekund) */
+        /* Sekin va silliq harakatlanish animatsiyasi */
         .col-down {
-            animation: scrollDown 4s linear infinite;
+            animation: scrollDown 14s linear infinite;
         }
 
-        /* Pastdan yuqoriga tez harakatlanadigan animatsiya (4 sekund) */
         .col-up {
-            animation: scrollUp 4s linear infinite;
+            animation: scrollUp 14s linear infinite;
         }
 
         @keyframes scrollDown {
@@ -64,42 +63,40 @@
 
         .col img {
             width: 100%;
-            height: 160px;
+            height: 140px;
             object-fit: cover;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
         }
 
-        .text-box {
-            display: flex;
-            flex-direction: column;
-            gap: 35px;
-            justify-content: center;
-            align-items: center;
+        /* Chap tomondagi KITOBLAR yozuvlari ustuni */
+        .text-col {
+            justify-content: space-around;
+            align-items: flex-start;
+            padding-left: 10px;
         }
 
         .bg-text {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 900;
             text-transform: uppercase;
-            color: #ffffff;
+            color: #d1d1d6;
             white-space: nowrap;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .bg-text.highlight {
-            color: #ff2a4d;
-            text-shadow: 0 0 20px rgba(255, 42, 77, 0.9);
+            color: #b31930; /* Qizil yorqin yozuv */
         }
 
-        /* Ustki qoplama va tugma */
+        /* Ustki qoplama va pastdagi Boshlash tugmasi */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, rgba(11,11,11,0.3) 0%, rgba(11,11,11,0.65) 80%, rgba(11,11,11,0.95) 100%);
+            background: linear-gradient(180deg, rgba(244,244,246,0.2) 0%, rgba(244,244,246,0.75) 75%, rgba(244,244,246,0.98) 100%);
             z-index: 10;
             display: flex;
             flex-direction: column;
@@ -113,9 +110,9 @@
         }
 
         .close-btn {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(0, 0, 0, 0.08);
             border: none;
-            color: white;
+            color: #333;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
@@ -144,7 +141,7 @@
             border: none;
             border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 25px rgba(179, 25, 48, 0.6);
+            box-shadow: 0 5px 20px rgba(179, 25, 48, 0.4);
             transition: transform 0.2s;
         }
 
@@ -157,7 +154,25 @@
 
     <!-- Harakatlanuvchi fon qismi -->
     <div class="background-grid">
-        <div class="col col-down">
+        <!-- 1-ustun: KITOBLAR yozuvlari -->
+        <div class="col col-down text-col">
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text highlight">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text highlight">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+            <div class="bg-text">KITOBLAR</div>
+        </div>
+
+        <!-- 2-ustun: Siz tashlagan logo.jpg rasmi (pastdan yuqoriga) -->
+        <div class="col col-up">
+            <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
@@ -169,20 +184,9 @@
             <img src="logo.jpg" alt="Logo">
         </div>
 
-        <div class="col col-up text-box">
-            <div class="bg-text">KITOBLAR</div>
-            <div class="bg-text highlight">KITOBLAR</div>
-            <div class="bg-text">KITOBLAR</div>
-            <div class="bg-text">KITOBLAR</div>
-            <div class="bg-text highlight">KITOBLAR</div>
-            <div class="bg-text">KITOBLAR</div>
-            <div class="bg-text">KITOBLAR</div>
-            <div class="bg-text highlight">KITOBLAR</div>
-            <div class="bg-text">KITOBLAR</div>
-            <div class="bg-text highlight">KITOBLAR</div>
-        </div>
-
+        <!-- 3-ustun: Siz tashlagan logo.jpg rasmi (yuqoridan pastga) -->
         <div class="col col-down">
+            <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">
             <img src="logo.jpg" alt="Logo">

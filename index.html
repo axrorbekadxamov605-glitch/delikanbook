@@ -20,7 +20,7 @@
             position: relative;
         }
 
-        /* 1-QISM: Kirish oynasi */
+        /* 1-QISM: Kirish oynasi (O'zgarmagan holatda) */
         #welcome-screen {
             position: fixed;
             top: 0;
@@ -139,7 +139,7 @@
             box-shadow: 0 5px 20px rgba(179, 25, 48, 0.4);
         }
 
-        /* 2-QISM: Asosiy do'kon sahifasi */
+        /* 2-QISM: Asosiy do'kon va Katalog bo'limlari */
         #main-screen {
             display: none;
             height: 100vh;
@@ -155,53 +155,106 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #f1f1f3;
         }
 
-        .user-info h2 { font-size: 14px; color: #666; font-weight: normal; }
-        .user-info h1 { font-size: 20px; color: #111; font-weight: bold; }
+        .user-info h2 { font-size: 13px; color: #666; font-weight: normal; }
+        .user-info h1 { font-size: 18px; color: #111; font-weight: bold; }
 
         .user-avatar {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             overflow: hidden;
             border: 2px solid #b31930;
         }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .search-box { padding: 0 20px; margin-bottom: 20px; }
-        .search-box input {
-            width: 100%;
-            padding: 14px 20px;
-            background: #f1f1f3;
-            border: none;
-            border-radius: 14px;
-            font-size: 15px;
-            outline: none;
-        }
+        .content-body { padding: 20px; }
 
-        .section-title { padding: 0 20px; font-size: 18px; font-weight: bold; margin-bottom: 12px; }
+        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #111; }
 
-        .categories {
-            display: flex;
-            gap: 12px;
-            padding: 0 20px;
-            overflow-x: auto;
+        /* Kategoriyalar to'rsimon (grid) ko'rinishi - kitob sotib olish uchun alohida bo'limlar */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
             margin-bottom: 25px;
         }
 
-        .cat-card {
-            min-width: 140px;
-            height: 90px;
-            background: #f1f1f3;
+        .category-box {
+            background: #f8f9fa;
+            border: 1px solid #eaeaea;
             border-radius: 16px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .cat-card h3 { font-size: 15px; color: #111; }
-        .cat-card span { font-size: 12px; color: #666; }
+
+        .category-box:active {
+            transform: scale(0.96);
+            background: #f1f1f3;
+        }
+
+        .category-box h3 { font-size: 15px; color: #111; margin-bottom: 5px; }
+        .category-box p { font-size: 12px; color: #666; }
+
+        /* Tanlangan bo'lim ichidagi kitoblar ro'yxati (dastlab yashirin) */
+        #category-detail {
+            display: none;
+        }
+
+        .back-cat-btn {
+            background: none;
+            border: none;
+            color: #b31930;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .book-card {
+            background: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 14px;
+            overflow: hidden;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .book-card img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .book-card h4 { font-size: 14px; color: #111; margin-bottom: 4px; }
+        .book-card span { font-size: 13px; color: #b31930; font-weight: bold; display: block; margin-bottom: 8px; }
+
+        .buy-btn {
+            background: #b31930;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+        }
 
         /* Pastki navigatsiya menyusi */
         .bottom-nav {
@@ -225,6 +278,7 @@
             color: #888;
             font-size: 11px;
             gap: 4px;
+            cursor: pointer;
         }
 
         .nav-item.active { color: #b31930; }
@@ -265,7 +319,7 @@
         </div>
     </div>
 
-    <!-- 2. Asosiy do'kon oynasi -->
+    <!-- 2. Asosiy do'kon sahifasi -->
     <div id="main-screen">
         <div>
             <div class="main-header">
@@ -278,57 +332,96 @@
                 </div>
             </div>
 
-            <div class="search-box">
-                <input type="text" placeholder="Kitob yoki muallif qidirish...">
-            </div>
+            <div class="content-body">
+                <!-- Asosiy Katalog va Bo'limlar ro'yxati -->
+                <div id="categories-view">
+                    <div class="section-title">Kitoblar katalogi</div>
+                    <div class="categories-grid">
+                        <div class="category-box" onclick="openCategory('Shaxsiy rivojlanish')">
+                            <h3>Shaxsiy rivojlanish</h3>
+                            <p>15 ta kitob</p>
+                        </div>
+                        <div class="category-box" onclick="openCategory('Diniy kitoblar')">
+                            <h3>Diniy kitoblar</h3>
+                            <p>20 ta kitob</p>
+                        </div>
+                        <div class="category-box" onclick="openCategory('Badiiy adabiyot')">
+                            <h3>Badiiy adabiyot</h3>
+                            <p>12 ta kitob</p>
+                        </div>
+                        <div class="category-box" onclick="openCategory('Biznes va Moliya')">
+                            <h3>Biznes va Moliya</h3>
+                            <p>10 ta kitob</p>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="section-title">Kategoriyalar</div>
-            <div class="categories">
-                <div class="cat-card" style="background: #eef2ff;">
-                    <h3>Shaxsiy rivojlanish</h3>
-                    <span>50 ta kitob</span>
-                </div>
-                <div class="cat-card" style="background: #fdf4ff;">
-                    <h3>Diniy</h3>
-                    <span>54 ta kitob</span>
-                </div>
-                <div class="cat-card" style="background: #fff7ed;">
-                    <h3>Badiiy</h3>
-                    <span>32 ta kitob</span>
+                <!-- Tanlangan bo'lim ichidagi kitoblar -->
+                <div id="category-detail">
+                    <button class="back-cat-btn" onclick="backToCategories()">← Orqaga qaytish</button>
+                    <div class="section-title" id="cat-title">Bo'lim</div>
+                    <div class="books-grid">
+                        <div class="book-card">
+                            <img src="logo.jpg" alt="Kitob">
+                            <h4>Ibratli Kitob</h4>
+                            <span>45,000 so'm</span>
+                            <button class="buy-btn" onclick="alert('Savatga qo\'shildi!')">Sotib olish</button>
+                        </div>
+                        <div class="book-card">
+                            <img src="logo.jpg" alt="Kitob">
+                            <h4>Muvaffaqiyat siri</h4>
+                            <span>38,000 so'm</span>
+                            <button class="buy-btn" onclick="alert('Savatga qo\'shildi!')">Sotib olish</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Pastki menyu bar -->
         <div class="bottom-nav">
-            <a href="#" class="nav-item">
+            <div class="nav-item">
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
                 Qaydlarim
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div class="nav-item">
                 <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 Sevimlilar
-            </a>
-            <a href="#" class="nav-item active">
+            </div>
+            <div class="nav-item active" onclick="backToCategories()">
                 <svg viewBox="0 0 24 24"><path d="M10 20c-1.1 0-1.99.9-1.99 2S8.9 24 10 24s2-.9 2-2-.9-2-2-2zm0-18c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
                 Katalog
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div class="nav-item">
                 <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
                 Savatcha
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div class="nav-item">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 Profil
-            </a>
+            </div>
         </div>
     </div>
 
     <script>
-        // Tugma bosilganda ishlaydigan oddiy va kafolatlangan funksiya
+        // Boshlash tugmasi
         document.getElementById('startBtn').addEventListener('click', function() {
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('main-screen').style.display = 'flex';
         });
+
+        // Kategoriyaga kirish
+        function openCategory(catName) {
+            document.getElementById('categories-view').style.display = 'none';
+            document.getElementById('category-detail').style.display = 'block';
+            document.getElementById('cat-title').innerText = catName;
+        }
+
+        // Kategoriyalar ro'yxatiga qaytish
+        function backToCategories() {
+            document.getElementById('category-detail').style.display = 'none';
+            document.getElementById('categories-view').style.display = 'block';
+        }
     </script>
 </body>
 </html>
